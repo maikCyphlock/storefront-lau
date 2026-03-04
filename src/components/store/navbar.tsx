@@ -9,26 +9,27 @@ type NavbarProps = {
 
 export function Navbar({ cartCount, onOpenCart }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/75 backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
-        <Link href="/" className="font-display text-sm tracking-[0.25em] text-zinc-100 uppercase">
-          OverSizeByLau
-        </Link>
+    <nav className="fixed top-0 left-0 right-0 z-[100] flex justify-between items-center px-[2.5rem] py-[1.2rem] border-b border-[#222] bg-[rgba(10,10,10,0.85)] backdrop-blur-[8px]">
+      <Link href="/" className="font-bebas text-[1.4rem] tracking-[0.15em] text-[var(--white)] no-underline">
+        OVERSIZE BY LAU
+      </Link>
 
-        <nav className="hidden items-center gap-5 text-[10px] tracking-[0.25em] text-zinc-400 uppercase md:flex">
-          <Link href="/#drop" className="transition hover:text-[#ffb6c1]">Colección</Link>
-          <Link href="/#custom" className="transition hover:text-[#ffb6c1]">Estudio</Link>
-          <Link href="/#statement" className="transition hover:text-[#ffb6c1]">Concepto</Link>
-        </nav>
+      <ul className="hidden md:flex gap-[2.5rem] list-none">
+        <li><Link href="#productos" className="text-[var(--mid)] no-underline text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200 hover:text-[var(--white)]">Productos</Link></li>
+        <li><Link href="#nosotros" className="text-[var(--mid)] no-underline text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200 hover:text-[var(--white)]">Nosotros</Link></li>
+        <li><Link href="#lookbook" className="text-[var(--mid)] no-underline text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200 hover:text-[var(--white)]">Lookbook</Link></li>
+        <li><Link href="#contacto" className="text-[var(--mid)] no-underline text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200 hover:text-[var(--white)]">Contacto</Link></li>
+      </ul>
 
+      <div className="flex items-center gap-6">
         <button
-          type="button"
           onClick={onOpenCart}
-          className="relative group flex items-center gap-3 px-6 py-2 border border-white/5 rounded-full bg-white/[0.02] hover:border-[#ffb6c1] transition-all"
+          className="text-[var(--mid)] no-underline text-[0.7rem] tracking-[0.2em] uppercase transition-colors duration-200 hover:text-[var(--white)]"
         >
-          <span className="text-[9px] font-bold tracking-[0.3em] text-zinc-100 uppercase group-hover:text-[#ffb6c1]">Bolsa [{cartCount}]</span>
+          Bolsa [{cartCount}]
         </button>
+        <span className="hidden md:inline text-[0.65rem] text-[var(--mid)] tracking-[0.1em]">★ Acarigua</span>
       </div>
-    </header>
+    </nav>
   );
 }

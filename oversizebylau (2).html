@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OVERSIZE BY LAU</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f0ece4;
+    --gray: #1a1a1a;
+    --mid: #888;
+    --accent: #e8e0d0;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 2.5rem;
+    border-bottom: 1px solid #222;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--mid);
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--white); }
+
+  .nav-tag {
+    font-size: 0.65rem;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 3rem 4rem 3rem;
+    border-right: 1px solid #222;
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--mid);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 1px;
+    background: var(--mid);
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 12vw, 10rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+  }
+
+  .hero-title span {
+    display: block;
+    color: var(--mid);
+    font-size: 0.5em;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.3em;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-desc {
+    font-size: 0.75rem;
+    color: var(--mid);
+    line-height: 1.8;
+    max-width: 320px;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--white);
+    color: var(--black);
+    text-decoration: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    padding: 1rem 2rem;
+    width: fit-content;
+    transition: all 0.2s;
+  }
+
+  .hero-cta:hover {
+    background: var(--black);
+    color: var(--white);
+    outline: 1px solid var(--white);
+  }
+
+  .hero-cta::after {
+    content: '→';
+    font-family: monospace;
+  }
+
+  .hero-right {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    position: relative;
+    background: #111;
+  }
+
+  .hero-img-top, .hero-img-bottom {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-img-top { border-bottom: 1px solid #222; }
+
+  .hero-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Wireframe globe decoration */
+  .globe-svg {
+    opacity: 0.25;
+    animation: rotate 20s linear infinite;
+  }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .hero-img-label {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    text-transform: uppercase;
+  }
+
+  .hero-img-letter {
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem;
+    color: rgba(255,255,255,0.03);
+    user-select: none;
+  }
+
+  /* Mockup tshirt card */
+  .tshirt-mock {
+    width: 180px;
+    height: 200px;
+    border: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+  }
+
+  .tshirt-icon {
+    font-size: 3rem;
+    filter: grayscale(1);
+  }
+
+  .tshirt-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+  }
+
+  /* ─── TICKER ─── */
+  .ticker-wrap {
+    border-top: 1px solid #222;
+    border-bottom: 1px solid #222;
+    overflow: hidden;
+    padding: 0.8rem 0;
+    background: #0d0d0d;
+  }
+
+  .ticker {
+    display: flex;
+    gap: 3rem;
+    animation: ticker 18s linear infinite;
+    white-space: nowrap;
+  }
+
+  .ticker-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .ticker-item .star {
+    color: var(--white);
+    font-size: 0.8rem;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── PRODUCTS GRID ─── */
+  .section {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid #222;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .section-num {
+    font-size: 0.65rem;
+    color: var(--mid);
+    letter-spacing: 0.2em;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #222;
+  }
+
+  .product-card {
+    background: var(--black);
+    aspect-ratio: 3/4;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5rem;
+    cursor: pointer;
+  }
+
+  .product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    z-index: 1;
+  }
+
+  .product-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8rem;
+    opacity: 0.08;
+    transition: opacity 0.4s, transform 0.6s;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: -0.05em;
+    line-height: 1;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .product-card:hover .product-bg {
+    opacity: 0.15;
+    transform: scale(1.05);
+  }
+
+  .product-variants {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.4rem;
+    z-index: 2;
+  }
+
+  .variant-dot {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    letter-spacing: 0.05em;
+    color: var(--mid);
+    font-family: 'Bebas Neue', sans-serif;
+  }
+
+  .product-info {
+    position: relative;
+    z-index: 2;
+  }
+
+  .product-category {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--mid);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .product-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+
+  .product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .product-price {
+    font-size: 0.75rem;
+    color: var(--mid);
+    letter-spacing: 0.1em;
+  }
+
+  .product-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--mid);
+    border: 1px solid #333;
+    padding: 0.25rem 0.5rem;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .product-card:hover .product-tag {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+  }
+
+  /* Decorative elements on cards */
+  .card-barcode {
+    position: absolute;
+    bottom: 5rem;
+    right: 1.5rem;
+    opacity: 0.15;
+    z-index: 2;
+    font-size: 0.4rem;
+    letter-spacing: -0.02em;
+    writing-mode: vertical-rl;
+    color: var(--mid);
+  }
+
+  /* ─── ABOUT STRIP ─── */
+  .about-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 500px;
+    border-bottom: 1px solid #222;
+  }
+
+  .about-left {
+    padding: 5rem 3rem;
+    border-right: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(#1a1a1a 1px, transparent 1px),
+      linear-gradient(90deg, #1a1a1a 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.4;
+  }
+
+  .about-content { position: relative; z-index: 1; }
+
+  .about-tag {
+    display: inline-block;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 2rem;
+    transform: rotate(-2deg);
+  }
+
+  .about-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 0.95;
+    margin-bottom: 2rem;
+  }
+
+  .about-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--mid);
+  }
+
+  .about-text {
+    font-size: 0.72rem;
+    color: var(--mid);
+    line-height: 2;
+    max-width: 380px;
+  }
+
+  .about-right {
+    padding: 5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .about-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: #222;
+    height: 100%;
+  }
+
+  .about-card {
+    background: var(--black);
+    padding: 2rem;
+    flex: 1;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    transition: background 0.2s;
+  }
+
+  .about-card:hover { background: #111; }
+
+  .about-card-icon {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .about-card-icon svg { width: 20px; height: 20px; stroke: var(--mid); fill: none; }
+
+  .about-card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .about-card-text {
+    font-size: 0.65rem;
+    color: var(--mid);
+    line-height: 1.8;
+  }
+
+  /* ─── MARQUEE ARTIST ─── */
+  .artist-marquee {
+    padding: 3rem 0;
+    border-bottom: 1px solid #222;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marqueeR 25s linear infinite;
+    width: max-content;
+  }
+
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    padding: 0 3rem;
+    border-right: 1px solid #222;
+    gap: 1rem;
+    white-space: nowrap;
+  }
+
+  .marquee-artist {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.05em;
+    color: #333;
+    transition: color 0.2s;
+  }
+
+  .marquee-item:hover .marquee-artist { color: var(--white); }
+
+  .marquee-dot {
+    width: 6px;
+    height: 6px;
+    background: #333;
+    border-radius: 50%;
+  }
+
+  @keyframes marqueeR {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ─── LOOKBOOK ─── */
+  .lookbook {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid #222;
+  }
+
+  .lookbook-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-rows: 300px 300px;
+    gap: 1px;
+    background: #222;
+    margin-top: 4rem;
+  }
+
+  .look-cell {
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .look-cell.tall { grid-row: span 2; }
+
+  .look-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .look-bg-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.04);
+    letter-spacing: -0.05em;
+    text-align: center;
+    line-height: 1;
+    padding: 1rem;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .look-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+  }
+
+  .look-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    text-transform: uppercase;
+  }
+
+  /* ─── SPOTIFY WIDGET ─── */
+  .spotify-widget {
+    background: #111;
+    border: 1px solid #222;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: fit-content;
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 3;
+    animation: floatWidget 3s ease-in-out infinite;
+  }
+
+  @keyframes floatWidget {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .spotify-cover {
+    width: 36px;
+    height: 36px;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  .spotify-info { flex: 1; }
+
+  .spotify-song {
+    font-size: 0.65rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.2rem;
+  }
+
+  .spotify-artist {
+    font-size: 0.55rem;
+    color: var(--mid);
+    letter-spacing: 0.05em;
+  }
+
+  .spotify-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .sp-btn {
+    background: none;
+    border: none;
+    color: var(--mid);
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 0.2rem;
+    transition: color 0.2s;
+  }
+
+  .sp-btn:hover { color: var(--white); }
+
+  .sp-bar {
+    width: 80px;
+    height: 2px;
+    background: #333;
+    margin-top: 0.4rem;
+    position: relative;
+  }
+
+  .sp-progress {
+    width: 40%;
+    height: 100%;
+    background: var(--white);
+  }
+
+  /* ─── STARS DECORATION ─── */
+  .star-4 {
+    display: inline-block;
+    color: var(--white);
+    font-size: 1rem;
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 4rem 3rem 2rem;
+    border-top: 1px solid #222;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .footer-brand {}
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .footer-tagline {
+    font-size: 0.65rem;
+    color: var(--mid);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .footer-handle {
+    font-size: 0.7rem;
+    color: var(--mid);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-handle:hover { color: var(--white); }
+
+  .footer-col-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 1.5rem;
+    color: var(--mid);
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .footer-links a {
+    color: #555;
+    text-decoration: none;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--white); }
+
+  .footer-bottom {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    grid-column: 1 / -1;
+  }
+
+  .footer-copy {
+    font-size: 0.6rem;
+    color: #333;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-barcode {
+    font-size: 0.5rem;
+    color: #222;
+    letter-spacing: -0.05em;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── WIREFRAME GLOBE ASSET ─── */
+  .wireframe-deco {
+    position: absolute;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  /* ─── COMING SOON BAND ─── */
+  .coming-band {
+    background: var(--white);
+    color: var(--black);
+    padding: 1rem 3rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid #222;
+  }
+
+  .coming-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .coming-badge {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 0.25rem 0.8rem;
+    transform: rotate(-3deg);
+    flex-shrink: 0;
+  }
+
+  .coming-stars {
+    display: flex;
+    gap: 0.5rem;
+    color: var(--black);
+    font-size: 1.2rem;
+  }
+
+  /* Responsive tweak */
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .products-grid { grid-template-columns: 1fr; }
+    .about-strip { grid-template-columns: 1fr; }
+    footer { grid-template-columns: 1fr; }
+    .lookbook-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+    .look-cell.tall { grid-row: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">OVERSIZE BY LAU</a>
+  <ul class="nav-links">
+    <li><a href="#productos">Productos</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <span class="nav-tag">★ Acarigua</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <!-- Wireframe decoration -->
+    <svg class="wireframe-deco" style="top:10%;right:5%;width:120px;" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="0.5">
+      <ellipse cx="50" cy="50" rx="45" ry="45"/>
+      <ellipse cx="50" cy="50" rx="45" ry="20"/>
+      <ellipse cx="50" cy="50" rx="25" ry="45"/>
+      <line x1="5" y1="50" x2="95" y2="50"/>
+      <line x1="50" y1="5" x2="50" y2="95"/>
+    </svg>
+
+    <p class="hero-eyebrow">Tshirt Oversize · Diseños personalizados</p>
+
+    <h1 class="hero-title">
+      <span>by Lau</span>
+      OVER<br>SIZE
+    </h1>
+
+    <p class="hero-desc">
+      Lleva a tu artista favorito contigo.<br>
+      Diseños únicos que expresan quién eres,<br>
+      en la mejor tela oversize. ✦
+    </p>
+
+    <a href="#productos" class="hero-cta">Ver colección</a>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-img-top">
+      <div class="hero-placeholder">
+        <div class="hero-img-letter">A</div>
+
+        <!-- Decorative tshirt mock -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;position:relative;z-index:2;">
+          <div style="width:160px;height:180px;border:1px solid #2a2a2a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;position:relative;overflow:hidden;">
+            <svg style="opacity:0.15;position:absolute;" width="100" height="100" viewBox="0 0 100 100" fill="none" stroke="white" stroke-width="0.8">
+              <ellipse cx="50" cy="50" rx="45" ry="45"/>
+              <ellipse cx="50" cy="50" rx="45" ry="18"/>
+              <ellipse cx="50" cy="50" rx="22" ry="45"/>
+              <line x1="5" y1="50" x2="95" y2="50"/>
+            </svg>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.1em;color:#444;position:relative;">ARTIST TEE</span>
+            <span style="font-size:0.55rem;color:#333;letter-spacing:0.2em;position:relative;">OVERSIZE FIT</span>
+          </div>
+
+          <div style="display:flex;gap:0.5rem;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.2em;color:#333;border:1px solid #222;padding:0.2rem 0.5rem;">A</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.2em;color:#333;border:1px solid #222;padding:0.2rem 0.5rem;">B</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:0.2em;color:#333;border:1px solid #222;padding:0.2rem 0.5rem;">C</span>
+          </div>
+        </div>
+
+        <!-- Spotify widget -->
+        <div class="spotify-widget">
+          <div class="spotify-cover">🎵</div>
+          <div class="spotify-info">
+            <div class="spotify-song">Blinding Lights</div>
+            <div class="spotify-artist">The Weeknd</div>
+            <div class="sp-bar"><div class="sp-progress"></div></div>
+          </div>
+          <div class="spotify-controls">
+            <button class="sp-btn">⏮</button>
+            <button class="sp-btn">⏸</button>
+            <button class="sp-btn">⏭</button>
+          </div>
+        </div>
+      </div>
+      <span class="hero-img-label">Colección actual</span>
+    </div>
+
+    <div class="hero-img-bottom">
+      <div class="hero-placeholder">
+        <div class="hero-img-letter">B</div>
+        <div style="position:relative;z-index:2;text-align:center;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:4rem;line-height:0.9;color:#1a1a1a;letter-spacing:-0.02em;">
+            NEW<br>DROP
+          </div>
+          <div style="margin-top:1rem;font-size:0.6rem;letter-spacing:0.3em;color:#333;text-transform:uppercase;">coming soon ✦</div>
+        </div>
+      </div>
+      <span class="hero-img-label">Próximo lanzamiento</span>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <!-- duplicated for infinite loop -->
+    <div class="ticker-item"><span class="star">✦</span> TSHIRT OVERSIZE</div>
+    <div class="ticker-item"><span class="star">✦</span> DISEÑOS PERSONALIZADOS</div>
+    <div class="ticker-item"><span class="star">✦</span> ACARIGUA</div>
+    <div class="ticker-item"><span class="star">✦</span> BY LAU</div>
+    <div class="ticker-item"><span class="star">✦</span> ENVÍOS NACIONALES</div>
+    <div class="ticker-item"><span class="star">✦</span> TSHIRT OVERSIZE</div>
+    <div class="ticker-item"><span class="star">✦</span> DISEÑOS PERSONALIZADOS</div>
+    <div class="ticker-item"><span class="star">✦</span> ACARIGUA</div>
+    <div class="ticker-item"><span class="star">✦</span> BY LAU</div>
+    <div class="ticker-item"><span class="star">✦</span> ENVÍOS NACIONALES</div>
+  </div>
+</div>
+
+<!-- COMING SOON BAND -->
+<div class="coming-band">
+  <span class="coming-text">NUEVA COLECCIÓN</span>
+  <div class="coming-stars">✦ ✦ ✦</div>
+  <span class="coming-badge">LAU</span>
+  <span class="coming-text">COMING SOON</span>
+  <div class="coming-stars">✦ ✦ ✦</div>
+  <span class="coming-badge">SEE U SOON</span>
+  <span class="coming-text">NUEVA COLECCIÓN</span>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section" id="productos">
+  <div class="section-header fade-in">
+    <h2 class="section-title">COLECCIÓN<br>ACTUAL</h2>
+    <span class="section-num">01 / PRODUCTOS</span>
+  </div>
+
+  <div class="products-grid">
+
+    <!-- MESSI -->
+    <div class="product-card fade-in">
+      <div class="product-bg">LIONEL MESSI</div>
+      <div class="product-variants">
+        <div class="variant-dot">A</div>
+        <div class="variant-dot">B</div>
+        <div class="variant-dot">C</div>
+      </div>
+      <div class="card-barcode">8 230 258 7</div>
+      <div class="product-info">
+        <p class="product-category">Fútbol · Colección íconos</p>
+        <h3 class="product-name">LIONEL MESSI</h3>
+        <div class="product-footer">
+          <span class="product-price">Consultar precio</span>
+          <span class="product-tag">Ver más →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAYLOR -->
+    <div class="product-card fade-in" style="transition-delay:0.1s">
+      <div class="product-bg">TAYLOR &amp; KANYE</div>
+      <div class="product-variants">
+        <div class="variant-dot">A</div>
+        <div class="variant-dot">B</div>
+        <div class="variant-dot">C</div>
+      </div>
+      <div class="card-barcode">8 230 258 8</div>
+      <div class="product-info">
+        <p class="product-category">Pop · Colección íconos</p>
+        <h3 class="product-name">TAYLOR &amp;<br>KANYE</h3>
+        <div class="product-footer">
+          <span class="product-price">Consultar precio</span>
+          <span class="product-tag">Ver más →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- HASBULLA -->
+    <div class="product-card fade-in" style="transition-delay:0.2s">
+      <div class="product-bg">HASBULLA</div>
+      <div class="product-variants">
+        <div class="variant-dot">A</div>
+        <div class="variant-dot">B</div>
+        <div class="variant-dot">C</div>
+      </div>
+      <div class="card-barcode">8 230 258 9</div>
+      <div class="product-info">
+        <p class="product-category">Internet · Colección íconos</p>
+        <h3 class="product-name">HASBULLA</h3>
+        <div class="product-footer">
+          <span class="product-price">Consultar precio</span>
+          <span class="product-tag">Ver más →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- BIEBER -->
+    <div class="product-card fade-in" style="transition-delay:0.3s">
+      <div class="product-bg">JUSTIN BIEBER</div>
+      <div class="product-variants">
+        <div class="variant-dot">A</div>
+        <div class="variant-dot">B</div>
+        <div class="variant-dot">C</div>
+      </div>
+      <div class="card-barcode">8 230 259 0</div>
+      <div class="product-info">
+        <p class="product-category">Pop · Colección íconos</p>
+        <h3 class="product-name">JUSTIN BIEBER</h3>
+        <div class="product-footer">
+          <span class="product-price">Consultar precio</span>
+          <span class="product-tag">Ver más →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- THE WEEKND -->
+    <div class="product-card fade-in" style="transition-delay:0.4s">
+      <div class="product-bg">THE WEEKND</div>
+      <div class="product-variants">
+        <div class="variant-dot">A</div>
+        <div class="variant-dot">B</div>
+        <div class="variant-dot">C</div>
+      </div>
+      <div class="card-barcode">8 230 259 1</div>
+      <div class="product-info">
+        <p class="product-category">R&amp;B · Colección íconos</p>
+        <h3 class="product-name">THE WEEKND</h3>
+        <div class="product-footer">
+          <span class="product-price">Consultar precio</span>
+          <span class="product-tag">Ver más →</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM -->
+    <div class="product-card fade-in" style="transition-delay:0.5s;background:#0d0d0d;">
+      <div class="product-bg" style="color:var(--white);opacity:0.03;">TU ARTISTA</div>
+      <div class="product-info">
+        <p class="product-category">Personalizado · Tu elección</p>
+        <h3 class="product-name">DISEÑO<br>CUSTOM</h3>
+        <div class="product-footer">
+          <span class="product-price">A pedido</span>
+          <span class="product-tag" style="border-color:#333;">Preguntar →</span>
+        </div>
+      </div>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);opacity:0.06;font-size:5rem;">✦</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARTIST MARQUEE -->
+<div class="artist-marquee">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-artist">MESSI</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">TAYLOR &amp; KANYE</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">THE WEEKND</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">JUSTIN BIEBER</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">HASBULLA</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">KANYE WEST</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">TU FAVO</span><div class="marquee-dot"></div></div>
+    <!-- duplicate -->
+    <div class="marquee-item"><span class="marquee-artist">MESSI</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">TAYLOR &amp; KANYE</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">THE WEEKND</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">JUSTIN BIEBER</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">HASBULLA</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">KANYE WEST</span><div class="marquee-dot"></div></div>
+    <div class="marquee-item"><span class="marquee-artist">TU FAVO</span><div class="marquee-dot"></div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about-strip" id="nosotros">
+  <div class="about-left">
+    <div class="about-grid-bg"></div>
+    <div class="about-content fade-in">
+      <span class="about-tag">BY LAU :)</span>
+      <h2 class="about-title">FASHION<br>ES <em>expresión</em><br>PERSONAL</h2>
+      <p class="about-text">
+        Somos Lau. Creemos que la moda es una extensión de quién eres,
+        de lo que escuchas, de lo que te mueve. Cada tshirt que hacemos lleva 
+        un pedazo de tu artista favorito — y un pedazo de nosotras. ✦
+      </p>
+    </div>
+
+    <!-- Wireframe heart decoration -->
+    <svg class="wireframe-deco" style="bottom:-5%;right:5%;width:200px;" viewBox="0 0 100 90" fill="none" stroke="white" stroke-width="0.6">
+      <path d="M50 80 C50 80 5 50 5 25 C5 10 15 5 25 5 C35 5 45 15 50 20 C55 15 65 5 75 5 C85 5 95 10 95 25 C95 50 50 80 50 80Z"/>
+      <!-- grid lines on heart shape -->
+      <line x1="50" y1="5" x2="50" y2="80"/>
+      <line x1="15" y1="20" x2="85" y2="20"/>
+      <line x1="8" y1="35" x2="92" y2="35"/>
+      <line x1="10" y1="50" x2="90" y2="50"/>
+      <line x1="20" y1="65" x2="80" y2="65"/>
+    </svg>
+  </div>
+
+  <div class="about-right">
+    <div class="about-cards fade-in">
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="about-card-title">TUS FAVS ✦</h3>
+          <p class="about-card-text">Hay muchas formas de expresar tus gustos y la moda es una de ellas. Lleva a tu artista favorito contigo a todos lados.</p>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="about-card-title">OVERSIZE FIT</h3>
+          <p class="about-card-text">Tener una tshirt oversize cambia las reglas del juego. El fit lo es todo, y nosotras lo sabemos &lt;3</p>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M3 12h.01M12 3v.01M21 12h.01M12 21v.01M5.636 5.636l.007.007M18.364 5.636l.007.007M18.364 18.364l.007.007M5.636 18.364l.007.007"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="about-card-title">ENTREGAS · ENVÍOS</h3>
+          <p class="about-card-text">Acarigua entregas personales. Envíos nacionales — tu camiseta llega a donde estés :)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOOKBOOK -->
+<section class="lookbook" id="lookbook">
+  <div class="section-header fade-in">
+    <h2 class="section-title">LOOK<br>BOOK</h2>
+    <span class="section-num">02 / EDITORIAL</span>
+  </div>
+
+  <div class="lookbook-grid fade-in">
+    <div class="look-cell tall">
+      <div class="look-bg-text">OVERSIZE BY LAU</div>
+      <div style="position:relative;z-index:2;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+        <div style="width:220px;height:280px;border:1px solid #222;display:flex;align-items:center;justify-content:center;position:relative;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:3.5rem;color:#1a1a1a;letter-spacing:-0.02em;line-height:1;text-align:center;">THE<br>WEEKND<br>TEE</span>
+        </div>
+      </div>
+      <div class="look-overlay">
+        <p class="look-label">Editorial · Colección principal</p>
+      </div>
+    </div>
+
+    <div class="look-cell">
+      <div class="look-bg-text">MESSI</div>
+      <div style="position:relative;z-index:2;text-align:center;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:#1c1c1c;letter-spacing:0.1em;">LIONEL<br>MESSI</span>
+      </div>
+      <div class="look-overlay">
+        <p class="look-label">Fútbol · Ícono</p>
+      </div>
+    </div>
+
+    <div class="look-cell">
+      <div class="look-bg-text">TAYLOR & KANYE</div>
+      <div style="position:relative;z-index:2;text-align:center;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:#1c1c1c;letter-spacing:0.1em;">TAYLOR<br>&amp; KANYE</span>
+      </div>
+      <div class="look-overlay">
+        <p class="look-label">Pop · Ícono</p>
+      </div>
+    </div>
+
+    <div class="look-cell">
+      <div class="look-bg-text">BIEBER</div>
+      <div style="position:relative;z-index:2;">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:2.5rem;color:#1c1c1c;letter-spacing:0.1em;text-align:center;display:block;">JUSTIN<br>BIEBER</span>
+      </div>
+      <div class="look-overlay">
+        <p class="look-label">Pop · Ícono</p>
+      </div>
+    </div>
+
+    <div class="look-cell" style="background:#0d0d0d;">
+      <div style="position:relative;z-index:2;text-align:center;padding:1.5rem;">
+        <div style="font-size:0.6rem;letter-spacing:0.3em;color:#333;text-transform:uppercase;margin-bottom:1rem;">@oversizebylau</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#222;letter-spacing:0.1em;">TU FAVO<br>AQUÍ</div>
+        <div style="margin-top:1rem;font-size:0.6rem;color:#2a2a2a;letter-spacing:0.2em;">DISEÑO CUSTOM ✦</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / FOOTER -->
+<footer id="contacto">
+  <div class="footer-brand fade-in">
+    <div class="footer-logo">OVERSIZE<br>BY LAU</div>
+    <p class="footer-tagline"><span class="star-4">✦</span> Tshirt Oversize · Diseños personalizados</p>
+    <a href="https://instagram.com/oversizebylau" class="footer-handle" target="_blank">
+      ↗ @oversizebylau
+    </a>
+  </div>
+
+  <div class="fade-in" style="transition-delay:0.1s">
+    <p class="footer-col-title">Navegación</p>
+    <ul class="footer-links">
+      <li><a href="#productos">Productos</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#lookbook">Lookbook</a></li>
+    </ul>
+  </div>
+
+  <div class="fade-in" style="transition-delay:0.2s">
+    <p class="footer-col-title">Contacto</p>
+    <ul class="footer-links">
+      <li><a href="#">Instagram DM</a></li>
+      <li><a href="#">WhatsApp</a></li>
+      <li><a href="#">Acarigua</a></li>
+    </ul>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2024 Oversize By Lau · By Lau :)</span>
+    <span class="footer-barcode">||| || | ||| | || || ||| | || | ||| || | || ||| 8 230 258 7</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Cursor glow effect
+  const cursor = document.createElement('div');
+  cursor.style.cssText = `
+    position:fixed;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,0.03) 0%,transparent 70%);
+    pointer-events:none;z-index:9998;transform:translate(-50%,-50%);
+    transition:transform 0.1s;
+  `;
+  document.body.appendChild(cursor);
+
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+</script>
+</body>
+</html>

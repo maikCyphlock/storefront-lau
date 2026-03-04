@@ -6,46 +6,55 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { products } from "@/data/products";
 import { ProductCard } from "@/components/store/product-card";
+import { Product } from "@/types/store";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export function ProductList() {
+type ProductListProps = {
+  onSelectProduct: (product: Product) => void;
+};
+
+export function ProductList({ onSelectProduct }: ProductListProps) {
   const container = useRef<HTMLElement>(null);
 
   useGSAP(
     () => {
-      gsap.from(".prd-card", {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.12,
-        ease: "power3.out",
+      gsap.from(".fade-in-section", {
         scrollTrigger: {
-          trigger: ".product-grid",
+          trigger: container.current,
+          start: "top 80%",
+        },
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+      });
+
+      gsap.from(".product-card-fade", {
+        scrollTrigger: {
+          trigger: ".products-grid",
           start: "top 85%",
         },
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.1,
       });
     },
     { scope: container }
   );
 
   return (
-    <section ref={container} id="drop" className="mx-auto w-full max-w-7xl px-4 py-20 sm:px-6">
-      <div className="mb-10 flex flex-col gap-3 border-b border-white/[0.06] pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[9px] font-bold tracking-[0.4em] text-[#ffb6c1] uppercase">Colección</p>
-          <h2 className="font-display mt-3 text-3xl text-zinc-100 uppercase tracking-tight sm:text-4xl">
-            Dark Extensions
-          </h2>
-        </div>
-        <p className="max-w-sm text-xs leading-5 text-zinc-500 font-light">
-          Piezas listas para usar. Identidad oscura y cruda.
-        </p>
+    <section ref={container} className="section py-[6rem] px-[3rem] border-b border-[#222]" id="productos">
+      <div className="section-header flex justify-between items-end mb-[4rem] fade-in-section">
+        <h2 className="section-title font-bebas text-[clamp(3rem,6vw,5rem)] leading-[1] tracking-[-0.01em]">COLECCIÓN<br />ACTUAL</h2>
+        <span className="section-num text-[0.65rem] text-[var(--mid)] tracking-[0.2em]">01 / PRODUCTOS</span>
       </div>
 
-      <div className="product-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1px] bg-[#222]">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <div key={product.id} className="product-card-fade">
+            <ProductCard product={product} onSelect={onSelectProduct} />
+          </div>
         ))}
       </div>
     </section>

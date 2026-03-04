@@ -1,75 +1,65 @@
 "use client";
 
-import { useState } from "react";
 import { Product } from "@/types/store";
-import { useCartStore } from "@/store/cart-store";
-import { formatUsd } from "@/lib/format";
 
 type ProductCardProps = {
   product: Product;
+  onSelect: (product: Product) => void;
 };
 
-export function ProductCard({ product }: ProductCardProps) {
-  const addToCart = useCartStore((state) => state.addToCart);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[0]);
-
+export function ProductCard({ product, onSelect }: ProductCardProps) {
   return (
-    <article className="prd-card group flex flex-col bg-black">
-      {/* Imagen con zoom suave en hover (solo desktop) */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-zinc-950">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
-          loading="lazy"
-        />
-        {/* Badge de precio sobre la imagen */}
-        <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md px-2.5 py-1 border border-white/5">
-          <span className="text-[10px] font-bold tracking-widest text-[#ffb6c1]">
-            {formatUsd(product.price)}
+    <div
+      className="product-card group bg-[var(--black)] aspect-[3/4] relative overflow-hidden flex flex-col justify-end p-[1.5rem] cursor-pointer"
+      onClick={() => onSelect(product)}
+    >
+      {/* Product image */}
+      <img
+        src={product.image}
+        alt={product.name}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.8s] ease-out group-hover:scale-[1.05] opacity-80 group-hover:opacity-100"
+      />
+
+      {/* Dark gradient overlay — matches HTML ::before */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.9)_0%,transparent_60%)] z-[1]" />
+
+      {/* Size variants */}
+      <div className="product-variants absolute top-[1rem] right-[1rem] flex gap-[0.4rem] z-[2]">
+        {product.sizes.map((size) => (
+          <div
+            key={size}
+            className="variant-dot w-[20px] h-[20px] border border-[#444] flex items-center justify-center text-[0.55rem] tracking-[0.05em] text-[var(--mid)] font-bebas"
+          >
+            {size}
+          </div>
+        ))}
+      </div>
+
+      {/* Decorative barcode */}
+      <div className="card-barcode absolute bottom-[5rem] right-[1.5rem] opacity-[0.15] z-[2] text-[0.4rem] tracking-[-0.02em] [writing-mode:vertical-rl] text-[var(--mid)]">
+        8 230 258 {product.id.toString().slice(-1)}
+      </div>
+
+      {/* Product info */}
+      <div className="product-info relative z-[2]">
+        <p className="product-category text-[0.55rem] tracking-[0.25em] text-[var(--mid)] uppercase mb-[0.4rem]">
+          {product.subtitle}
+        </p>
+        <h3 className="product-name font-bebas text-[1.8rem] tracking-[0.05em] leading-[1] mb-[0.8rem] text-[var(--white)]">
+          {product.name}
+        </h3>
+        <div className="product-footer flex justify-between items-center">
+          <span className="product-price text-[0.75rem] text-[var(--mid)] tracking-[0.1em]">
+            Consultar precio
+          </span>
+          <span
+            className="product-tag text-[0.55rem] tracking-[0.15em] text-[var(--mid)] border border-[#333] px-[0.5rem] py-[0.25rem] uppercase transition-all duration-200 group-hover:bg-[var(--pink-soft)] group-hover:text-[var(--black)] group-hover:border-[var(--pink-soft)]"
+          >
+            Ver más →
           </span>
         </div>
       </div>
-
-      {/* Info + Controles (siempre visibles) */}
-      <div className="flex flex-col gap-4 pt-4 pb-2">
-        <div className="space-y-1 px-1">
-          <h3 className="font-display text-sm tracking-wide text-zinc-100 uppercase leading-none truncate">
-            {product.name}
-          </h3>
-          <p className="text-[9px] font-bold tracking-[0.2em] text-zinc-500 uppercase">
-            {product.subtitle}
-          </p>
-        </div>
-
-        {/* Talla + Botón — siempre visibles, funciona en mobile */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <select
-              value={selectedSize}
-              onChange={(e) => setSelectedSize(e.target.value)}
-              className="w-full appearance-none bg-zinc-950 border border-white/10 px-3 py-2.5 text-[9px] font-bold tracking-[0.2em] text-zinc-300 uppercase outline-none focus:border-[#ffb6c1] transition-colors"
-            >
-              {product.sizes.map((size) => (
-                <option key={size} value={size} className="bg-black text-white">
-                  {size}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-zinc-600">
-              <span className="text-xs">↓</span>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => addToCart({ product, size: selectedSize })}
-            className="shrink-0 bg-white px-4 py-2.5 text-[9px] font-bold tracking-[0.2em] text-black uppercase transition-colors hover:bg-[#ffb6c1] active:bg-[#ffb6c1] active:scale-95"
-          >
-            + Bolsa
-          </button>
-        </div>
-      </div>
-    </article>
+    </div>
   );
 }
