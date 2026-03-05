@@ -5,3 +5,4 @@
 - [x] Restaurar margins/paddings en el botón de añadir a la bolsa en el modal.
 - [x] Refinar sistema de padding estructural en Modal y Carrito.
 - [x] Corregir configuración de Tailwind v4 y fuentes custom.
+- [x] Rediseñar la sección Lookbook con estética editorial premium.

@@ -3,6 +3,7 @@ export type Product = {
   name: string;
   subtitle: string;
   price: number;
+  priceBySize?: Record<string, number>;
   image: string;
   sizes: string[];
 };

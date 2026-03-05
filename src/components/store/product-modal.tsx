@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import { Product } from "@/types/store";
 import { useCartStore } from "@/store/cart-store";
 
+const WHATSAPP_NUMBER = "584145332928";
+
+function getPrice(product: Product, size: string): number {
+    if (product.priceBySize && product.priceBySize[size]) {
+        return product.priceBySize[size];
+    }
+    return product.price;
+}
+
 type ProductModalProps = {
     product: Product | null;
     onClose: () => void;
@@ -91,10 +100,15 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                         <div className="space-y-12 mb-12">
                             {/* Price Section */}
                             <div className="border-l border-[#222] pl-6 py-1">
-                                <span className="text-[0.55rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom uppercase block mb-3">Price Inquiry</span>
-                                <span className="font-mono-custom text-[0.95rem] text-[var(--white)] leading-tight block">
-                                    Consult via WhatsApp
+                                <span className="text-[0.55rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom uppercase block mb-3">PRECIO</span>
+                                <span className="font-bebas text-[2.5rem] text-[var(--white)] leading-none block">
+                                    ${getPrice(product, selectedSize)}
                                 </span>
+                                {product.priceBySize && (
+                                    <span className="text-[0.5rem] tracking-[0.2em] text-[var(--mid)] font-mono-custom mt-2 block">
+                                        S / M / L — $18 &nbsp;·&nbsp; XL — $20
+                                    </span>
+                                )}
                             </div>
 
                             {/* Size Selection */}
@@ -120,12 +134,21 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
                     {/* Action Bar: Structural Footer */}
                     <div className="mt-auto border-t border-[#1a1a1a] bg-[#080808] p-8 md:p-14 pt-10 md:pt-12">
+                        <a
+                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola! Me interesa la franela *${product.name}* en talla *${selectedSize}* ($${getPrice(product, selectedSize)})`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-[#25D366] text-[var(--black)] py-5 md:py-6 font-mono-custom text-[0.75rem] md:text-[0.8rem] tracking-[0.35em] uppercase transition-all hover:bg-[#1ebe5d] flex items-center justify-center gap-4 group"
+                        >
+                            Consultar por WhatsApp <span className="text-xl transition-transform group-hover:translate-x-1">→</span>
+                        </a>
+
                         <button
                             onClick={() => {
                                 addToCart({ product, size: selectedSize });
                                 onClose();
                             }}
-                            className="w-full bg-[var(--white)] text-[var(--black)] py-5 md:py-6 font-mono-custom text-[0.75rem] md:text-[0.8rem] tracking-[0.35em] uppercase transition-all hover:bg-[var(--pink-soft)] flex items-center justify-center gap-4 group"
+                            className="w-full mt-3 bg-[var(--white)] text-[var(--black)] py-5 md:py-6 font-mono-custom text-[0.75rem] md:text-[0.8rem] tracking-[0.35em] uppercase transition-all hover:bg-[var(--pink-soft)] flex items-center justify-center gap-4 group"
                         >
                             Añadir al Carrito <span className="text-xl transition-transform group-hover:translate-x-1">→</span>
                         </button>
@@ -135,7 +158,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                                 ACARIGUA · NAL
                             </p>
                             <p className="text-[0.5rem] tracking-[0.4em] text-[var(--mid)] uppercase font-mono-custom">
-                                OSBL-26
+                                +58 414-5332928
                             </p>
                         </div>
                     </div>

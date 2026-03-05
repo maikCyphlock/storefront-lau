@@ -3,6 +3,25 @@
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import Image from "next/image";
+
+const COLLECTION_ITEMS = [
+    {
+        src: "/product/book.jpeg",
+        alt: "New Collection — Oversize Graphic Tee 01",
+        label: "PIECE 01",
+    },
+    {
+        src: "/product/book-2.jpeg",
+        alt: "New Collection — Oversize Graphic Tee 02",
+        label: "PIECE 02",
+    },
+    {
+        src: "/product/book-3.jpeg",
+        alt: "New Collection — Oversize Graphic Tee 03",
+        label: "PIECE 03",
+    },
+];
 
 export function Lookbook() {
     const container = useRef<HTMLElement>(null);
@@ -15,70 +34,121 @@ export function Lookbook() {
                     start: "top 80%",
                 },
                 opacity: 0,
-                y: 30,
-                duration: 1,
-                stagger: 0.15,
+                y: 40,
+                duration: 1.2,
+                ease: "power3.out",
+                stagger: 0.2,
+            });
+
+            // Parallax effect on hover for images
+            const cells = document.querySelectorAll('.look-cell');
+            cells.forEach((cell) => {
+                const img = cell.querySelector('img');
+                if (img) {
+                    cell.addEventListener('mouseenter', () => {
+                        gsap.to(img, { scale: 1.08, duration: 1.5, ease: "power2.out" });
+                    });
+                    cell.addEventListener('mouseleave', () => {
+                        gsap.to(img, { scale: 1.0, duration: 1.5, ease: "power2.out" });
+                    });
+                }
             });
         },
         { scope: container }
     );
 
     return (
-        <section ref={container} className="lookbook py-[6rem] px-[3rem] border-b border-[#222]" id="lookbook">
-            <div className="section-header flex justify-between items-end mb-[4rem] look-fade">
-                <h2 className="section-title font-bebas text-[clamp(3rem,6vw,5rem)] leading-[1] tracking-[-0.01em]">LOOK<br />BOOK</h2>
-                <span className="section-num text-[0.65rem] text-[var(--mid)] tracking-[0.2em]">02 / EDITORIAL</span>
+        <section ref={container} className="lookbook py-[8rem] px-[4vw] border-b border-[#1a1a1a]" id="lookbook">
+            {/* Header */}
+            <div className="section-header flex justify-between items-end mb-[5rem] look-fade">
+                <div className="flex flex-col gap-4">
+                    <span className="text-[0.6rem] tracking-[0.4em] text-[var(--mid)] uppercase font-mono-custom">PRÓXIMA COLECCIÓN</span>
+                    <h2 className="font-bebas text-[clamp(4rem,10vw,8rem)] leading-[0.85] tracking-[-0.02em] uppercase">
+                        NEW<br />COLLECTION
+                    </h2>
+                </div>
+                <div className="text-right hidden md:block">
+                    <span className="text-[0.6rem] tracking-[0.4em] text-[var(--mid)] uppercase font-mono-custom block mb-2">DROP 01 / 2025</span>
+                    <span className="text-[0.55rem] tracking-[0.3em] text-[var(--pink-soft)] uppercase font-mono-custom opacity-70 italic">OVERSIZE COLLECTION</span>
+                </div>
             </div>
 
-            <div className="lookbook-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr] md:grid-rows-[300px_300px] gap-[1px] bg-[#222] mt-[4rem] look-fade">
-                <div className="look-cell bg-[var(--black)] relative overflow-hidden flex items-center justify-center sm:col-span-2 md:col-span-1 md:row-span-2 min-h-[300px]">
-                    <div className="look-bg-text absolute inset-0 flex items-center justify-center font-bebas text-[5rem] text-[rgba(255,255,255,0.04)] tracking-[-0.05em] text-center leading-[1] p-[1rem]">OVERSIZE BY LAU</div>
-                    <div className="relative z-[2] w-full h-full flex items-center justify-center">
-                        <div className="w-[220px] h-[280px] border border-[#222] flex items-center justify-center relative">
-                            <span className="font-bebas text-[3.5rem] text-[#1a1a1a] tracking-[-0.02em] leading-[1] text-center">THE<br />WEEKND<br />TEE</span>
+            {/* Collection Grid — 3 pieces */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[1px] bg-[#1a1a1a] look-fade">
+                {COLLECTION_ITEMS.map((item, i) => (
+                    <div
+                        key={i}
+                        className="look-cell relative overflow-hidden bg-[#050505] group aspect-[3/4]"
+                    >
+                        <Image
+                            src={item.src}
+                            alt={item.alt}
+                            fill
+                            className="object-cover object-top opacity-90 transition-opacity duration-700 group-hover:opacity-100"
+                        />
+
+                        {/* Overlay gradient */}
+                        <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.7),transparent_50%)] pointer-events-none" />
+
+                        {/* Top label */}
+                        <div className="absolute top-6 left-6 z-10">
+                            <span className="text-[0.5rem] tracking-[0.5em] text-[rgba(255,255,255,0.4)] font-mono-custom uppercase">{item.label}</span>
+                        </div>
+
+                        {/* Bottom info */}
+                        <div className="absolute bottom-6 left-6 right-6 z-10 flex justify-between items-end">
+                            <div>
+                                <span className="text-[0.55rem] tracking-[0.3em] text-[rgba(255,255,255,0.6)] font-mono-custom uppercase block">OVERSIZE TEE</span>
+                                <span className="text-[0.45rem] tracking-[0.3em] text-[rgba(255,255,255,0.3)] font-mono-custom uppercase">240 GSM</span>
+                            </div>
+                            <span className="bg-[var(--white)] text-[var(--black)] font-mono-custom text-[0.5rem] tracking-[0.2em] px-3 py-1.5 uppercase opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                                VER MÁS
+                            </span>
                         </div>
                     </div>
-                    <div className="look-overlay absolute bottom-0 left-0 right-0 p-[1.5rem] bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]">
-                        <p className="look-label text-[0.6rem] tracking-[0.2em] text-[var(--mid)] uppercase">Editorial · Colección principal</p>
+                ))}
+            </div>
+
+            {/* Technical Strip  */}
+            <div className="mt-12 bg-[var(--black)] border border-[#1a1a1a] p-8 md:p-12 look-fade">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                    <div className="space-y-3">
+                        <span className="text-[0.55rem] tracking-[0.4em] text-[var(--pink-soft)] uppercase font-mono-custom block">ESPECIFICACIONES DE LA COLECCIÓN</span>
+                        <div className="flex gap-8 flex-wrap">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[0.5rem] text-[var(--mid)] font-mono-custom">MATERIAL</span>
+                                <span className="text-[0.6rem] text-[var(--white)] font-mono-custom uppercase">100% Algodón Premium</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[0.5rem] text-[var(--mid)] font-mono-custom">PESO TELA</span>
+                                <span className="text-[0.6rem] text-[var(--white)] font-mono-custom uppercase">240 GSM / Heavyweight</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[0.5rem] text-[var(--mid)] font-mono-custom">FIT</span>
+                                <span className="text-[0.6rem] text-[var(--white)] font-mono-custom uppercase">Oversize / Drop Shoulder</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[0.5rem] text-[var(--mid)] font-mono-custom">ORIGEN</span>
+                                <span className="text-[0.6rem] text-[var(--white)] font-mono-custom uppercase">Acarigua, Venezuela</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                        <span className="font-bebas text-[2rem] tracking-[0.05em] leading-none block">3 PIEZAS</span>
+                        <span className="text-[0.5rem] tracking-[0.3em] text-[var(--mid)] font-mono-custom uppercase">EDICIÓN LIMITADA</span>
                     </div>
                 </div>
+            </div>
 
-                <div className="look-cell bg-[var(--black)] relative overflow-hidden flex items-center justify-center min-h-[300px]">
-                    <div className="look-bg-text absolute inset-0 flex items-center justify-center font-bebas text-[5rem] text-[rgba(255,255,255,0.04)] tracking-[-0.05em] text-center leading-[1] p-[1rem]">MESSI</div>
-                    <div className="relative z-[2] text-center">
-                        <span className="font-bebas text-[2.5rem] text-[#1c1c1c] tracking-[0.1em]">LIONEL<br />MESSI</span>
-                    </div>
-                    <div className="look-overlay absolute bottom-0 left-0 right-0 p-[1.5rem] bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]">
-                        <p className="look-label text-[0.6rem] tracking-[0.2em] text-[var(--mid)] uppercase">Fútbol · Ícono</p>
-                    </div>
+            {/* Footer */}
+            <div className="mt-16 flex flex-col md:flex-row justify-between items-center gap-8 opacity-40">
+                <div className="flex gap-12">
+                    <span className="text-[0.45rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom">DROP 01</span>
+                    <span className="text-[0.45rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom">OVERSIZE</span>
+                    <span className="text-[0.45rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom">240 GSM</span>
                 </div>
-
-                <div className="look-cell bg-[var(--black)] relative overflow-hidden flex items-center justify-center min-h-[300px]">
-                    <div className="look-bg-text absolute inset-0 flex items-center justify-center font-bebas text-[5rem] text-[rgba(255,255,255,0.04)] tracking-[-0.05em] text-center leading-[1] p-[1rem]">TAYLOR & KANYE</div>
-                    <div className="relative z-[2] text-center">
-                        <span className="font-bebas text-[2.5rem] text-[#1c1c1c] tracking-[0.1em]">TAYLOR<br />& KANYE</span>
-                    </div>
-                    <div className="look-overlay absolute bottom-0 left-0 right-0 p-[1.5rem] bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]">
-                        <p className="look-label text-[0.6rem] tracking-[0.2em] text-[var(--mid)] uppercase">Pop · Ícono</p>
-                    </div>
-                </div>
-
-                <div className="look-cell bg-[var(--black)] relative overflow-hidden flex items-center justify-center min-h-[300px]">
-                    <div className="look-bg-text absolute inset-0 flex items-center justify-center font-bebas text-[5rem] text-[rgba(255,255,255,0.04)] tracking-[-0.05em] text-center leading-[1] p-[1rem]">BIEBER</div>
-                    <div className="relative z-[2] text-center">
-                        <span className="font-bebas text-[2.5rem] text-[#1c1c1c] tracking-[0.1em] text-center block">JUSTIN<br />BIEBER</span>
-                    </div>
-                    <div className="look-overlay absolute bottom-0 left-0 right-0 p-[1.5rem] bg-[linear-gradient(to_top,rgba(0,0,0,0.9),transparent)]">
-                        <p className="look-label text-[0.6rem] tracking-[0.2em] text-[var(--mid)] uppercase">Pop · Ícono</p>
-                    </div>
-                </div>
-
-                <div className="look-cell bg-[#0d0d0d] relative overflow-hidden flex items-center justify-center min-h-[300px]">
-                    <div className="relative z-[2] text-center p-[1.5rem]">
-                        <div className="text-[0.6rem] tracking-[0.3em] text-[#333] uppercase mb-[1rem]">@oversizebylau</div>
-                        <div className="font-bebas text-[2rem] text-[#222] tracking-[0.1em]">TU FAVO<br />AQUÍ</div>
-                        <div className="mt-[1rem] text-[0.6rem] text-[#2a2a2a] tracking-[0.2em]">DISEÑO CUSTOM ✦</div>
-                    </div>
+                <div className="font-mono-custom text-[0.45rem] tracking-[0.5em] text-[var(--mid)] uppercase">
+                    PROPIEDAD INTELECTUAL © 2025 BY LAU
                 </div>
             </div>
         </section>
