@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/store/cart-store";
-import { useStore } from "@/hooks/use-store";
 
 type CartDrawerProps = {
   open: boolean;
@@ -10,12 +10,17 @@ type CartDrawerProps = {
 };
 
 export function CartDrawer({ open, onClose }: CartDrawerProps) {
-  const items = useStore(useCartStore, (state) => state.items) ?? [];
+  const [mounted, setMounted] = useState(false);
+  const items = useCartStore((state) => state.items);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const setQuantity = useCartStore((state) => state.setQuantity);
-  const totalPrice = useStore(useCartStore, (state) => state.totalPrice()) ?? 0;
+  const totalPrice = useCartStore((state) => state.totalPrice());
 
-  if (!open) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!open || !mounted) return null;
 
   return (
     <div className="fixed inset-0" style={{ zIndex: 9999 }}>
@@ -160,7 +165,7 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
           </div>
 
           <Link
-            href="https://wa.me/584125555555"
+            href="https://wa.me/584145332928"
             target="_blank"
             onClick={onClose}
             className="block w-full bg-[var(--white)] text-[var(--black)] py-5 text-center font-mono-custom text-[0.75rem] tracking-[0.3em] uppercase no-underline transition-all duration-300 hover:bg-[var(--pink-soft)] flex items-center justify-center gap-3 group"

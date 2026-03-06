@@ -7,11 +7,16 @@
     "vinex": "vinext dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
+    "@libsql/client": "^0.17.0",
+    "better-auth": "^1.5.4",
     "clsx": "^2.1.1",
+    "drizzle-orm": "^0.45.1",
     "gsap": "^3.14.2",
     "lucide-react": "^0.576.0",
     "next": "15",
@@ -28,6 +33,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "drizzle-kit": "^0.31.9",
     "eslint": "^9",
     "eslint-config-next": "15",
     "tailwindcss": "^4",

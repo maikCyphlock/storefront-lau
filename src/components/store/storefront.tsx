@@ -12,13 +12,17 @@ import { ArtistMarquee } from "@/components/store/artist-marquee";
 import { Lookbook } from "@/components/store/lookbook";
 import { Footer } from "@/components/store/footer";
 import { useCartStore } from "@/store/cart-store";
-import { useStore } from "@/hooks/use-store";
 import { Product } from "@/types/store";
 
 export function Storefront() {
+  const [mounted, setMounted] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const cartCount = useStore(useCartStore, (state) => state.totalItems()) ?? 0;
+  const cartCount = useCartStore((state) => state.totalItems());
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cursor glow effect — desktop only
   useEffect(() => {
@@ -50,7 +54,7 @@ export function Storefront() {
 
   return (
     <div className="min-h-screen bg-[var(--black)] text-[var(--white)] selection:bg-[var(--white)] selection:text-[var(--black)]">
-      <Navbar cartCount={cartCount} onOpenCart={() => setCartOpen(true)} />
+      <Navbar cartCount={mounted ? cartCount : 0} onOpenCart={() => setCartOpen(true)} />
 
       <HeroSection />
 

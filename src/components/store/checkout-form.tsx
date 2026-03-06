@@ -1,38 +1,11 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
-import { z } from "zod";
+import { FormEvent, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/store/cart-store";
-import {
-  buildOrderMessage,
-  buildWhatsAppLink,
-  DeliveryMethod,
-  OrderType,
-} from "@/lib/whatsapp";
+import { DeliveryMethod, OrderType } from "@/lib/whatsapp";
 import { formatUsd } from "@/lib/format";
-
-const checkoutSchema = z
-  .object({
-    fullName: z.string().min(3, "Ingresa nombre y apellido"),
-    phone: z
-      .string()
-      .min(10, "Ingresa un telefono valido")
-      .regex(/^[0-9+\-\s()]+$/, "Solo caracteres de telefono"),
-    deliveryMethod: z.enum(["Delivery Acarigua", "Retiro en punto", "Envio nacional"]),
-    orderType: z.enum(["Catalogo", "Diseno personalizado"]),
-    customBrief: z.string().max(240, "Maximo 240 caracteres").optional(),
-    notes: z.string().max(200, "Maximo 200 caracteres").optional(),
-  })
-  .superRefine((data, ctx) => {
-    if (data.orderType === "Diseno personalizado" && !data.customBrief?.trim()) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["customBrief"],
-        message: "Describe tu idea para el diseno personalizado",
-      });
-    }
-  });
+import { checkoutOrderSchema } from "@/lib/orders";
 
 type FormType = {
   fullName: string;
@@ -43,14 +16,16 @@ type FormType = {
   notes: string;
 };
 
-type FormErrors = Partial<Record<keyof z.infer<typeof checkoutSchema>, string>>;
+type FormErrors = Partial<Record<keyof FormType | "items" | "form", string>>;
 
 export function CheckoutForm() {
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const total = useCartStore((state) => state.totalPrice());
+  const clearCart = useCartStore((state) => state.clearCart);
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isPending, startTransition] = useTransition();
   const [form, setForm] = useState<FormType>({
     fullName: "",
     phone: "",
@@ -65,17 +40,23 @@ export function CheckoutForm() {
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (items.length === 0 && form.orderType === "Catalogo") {
-      setErrors({ fullName: "Agrega productos al carrito antes de continuar" });
-      return;
-    }
-
-    const result = checkoutSchema.safeParse(form);
+    const payload = {
+      ...form,
+      items: items.map((item) => ({
+        productId: item.product.id,
+        productName: item.product.name,
+        productImage: item.product.image,
+        size: item.size,
+        quantity: item.quantity,
+        unitPrice: item.product.price,
+      })),
+    };
+    const result = checkoutOrderSchema.safeParse(payload);
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
       for (const issue of result.error.issues) {
-        const path = issue.path[0] as keyof FormErrors;
+        const path = (issue.path[0] as keyof FormErrors | undefined) ?? "form";
         fieldErrors[path] = issue.message;
       }
       setErrors(fieldErrors);
@@ -83,10 +64,39 @@ export function CheckoutForm() {
     }
 
     setErrors({});
-    const message = buildOrderMessage(result.data, items);
-    const wa = buildWhatsAppLink(message);
+    startTransition(async () => {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(result.data),
+      });
 
-    router.push(`/pedido-en-espera?wa=${encodeURIComponent(wa)}&total=${total}&advance=${advance}`);
+      const data = (await response.json().catch(() => null)) as
+        | {
+            id?: string;
+            total?: number;
+            advance?: number;
+            whatsappLink?: string;
+            message?: string;
+          }
+        | null;
+
+      if (!response.ok || !data?.id || !data.whatsappLink) {
+        setErrors({
+          form:
+            data?.message ??
+            "No se pudo registrar el pedido. Intenta de nuevo.",
+        });
+        return;
+      }
+
+      clearCart();
+      router.push(
+        `/pedido-en-espera?id=${data.id}&wa=${encodeURIComponent(data.whatsappLink)}&total=${data.total ?? total}&advance=${data.advance ?? advance}`,
+      );
+    });
   };
 
   return (
@@ -190,12 +200,15 @@ export function CheckoutForm() {
       <div className="mt-5 rounded-xl border border-pink-200/35 bg-pink-200/10 p-3 text-xs text-pink-100">
         Pedido en espera hasta completar anticipo obligatorio del 50%. Total: {formatUsd(total)}. Anticipo: {formatUsd(advance)}.
       </div>
+      {errors.items && <p className="mt-3 text-xs text-red-300">{errors.items}</p>}
+      {errors.form && <p className="mt-3 text-xs text-red-300">{errors.form}</p>}
 
       <button
         type="submit"
+        disabled={isPending}
         className="mt-4 w-full rounded-xl border border-pink-200/50 bg-pink-200/15 px-4 py-3 text-[10px] tracking-[0.2em] text-pink-100 uppercase transition hover:bg-pink-200/25"
       >
-        Confirmar y abrir WhatsApp
+        {isPending ? "Guardando pedido..." : "Confirmar y abrir WhatsApp"}
       </button>
     </form>
   );

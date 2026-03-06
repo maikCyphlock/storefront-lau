@@ -5,12 +5,13 @@ import { useEffect } from "react";
 import { formatUsd } from "@/lib/format";
 
 type PendingOrderProps = {
+  orderId?: string;
   waLink: string;
   total: number;
   advance: number;
 };
 
-export function PendingOrder({ waLink, total, advance }: PendingOrderProps) {
+export function PendingOrder({ orderId, waLink, total, advance }: PendingOrderProps) {
   useEffect(() => {
     if (!waLink) return;
 
@@ -31,6 +32,7 @@ export function PendingOrder({ waLink, total, advance }: PendingOrderProps) {
         </p>
 
         <div className="mt-6 rounded-2xl border border-white/10 bg-black/35 p-4 text-sm text-zinc-200">
+          {orderId ? <p>Numero de pedido: {orderId}</p> : null}
           <p>Total estimado: {formatUsd(total)}</p>
           <p>Anticipo requerido (50%): {formatUsd(advance)}</p>
           <p className="mt-2 text-xs text-zinc-400">Sin ese pago no se procesa inventario, despacho ni reserva.</p>

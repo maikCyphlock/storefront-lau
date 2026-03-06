@@ -26,12 +26,23 @@ export function HeroSection() {
 
   return (
     <section ref={container} className="hero min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden">
-      {/* HERO LEFT — Content */}
-      <div className="hero-left flex flex-col justify-end px-[3rem] pt-[8rem] pb-[4rem] md:border-r border-[#222] relative">
-        {/* Grid pattern background */}
+      <div className="hero-left flex flex-col justify-end px-[2rem] pt-[8rem] pb-[4rem] md:px-[3rem] md:border-r border-[#222] relative z-[2]">
+        <div className="absolute inset-0 md:hidden">
+          <video
+            className="absolute inset-0 h-full w-full object-cover opacity-28"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,10,10,0.55)_0%,rgba(10,10,10,0.35)_35%,rgba(10,10,10,0.88)_100%)]" />
+        </div>
+
         <div className="absolute inset-0 bg-[linear-gradient(#1a1a1a_1px,transparent_1px),linear-gradient(90deg,#1a1a1a_1px,transparent_1px)] bg-[size:60px_60px] opacity-[0.3] pointer-events-none" />
 
-        {/* Wireframe globe decoration */}
         <svg className="absolute opacity-[0.06] pointer-events-none top-[8%] right-[5%] w-[120px] animate-[spin_30s_linear_infinite]" viewBox="0 0 100 100" fill="none" stroke="white" strokeWidth="0.5">
           <ellipse cx="50" cy="50" rx="45" ry="45" />
           <ellipse cx="50" cy="50" rx="45" ry="20" />
@@ -41,8 +52,7 @@ export function HeroSection() {
           <line x1="50" y1="5" x2="50" y2="95" />
         </svg>
 
-        {/* Corner coordinates */}
-        <div className="absolute top-28 left-[3rem] flex flex-col gap-1 z-[2]">
+        <div className="absolute top-28 left-[2rem] flex flex-col gap-1 z-[2] md:left-[3rem]">
           <span className="text-[0.5rem] tracking-[0.3em] text-[#333] font-mono-custom">09&apos;19&apos;N</span>
           <span className="text-[0.5rem] tracking-[0.3em] text-[#333] font-mono-custom">69&apos;39&apos;W</span>
           <span className="text-[0.5rem] tracking-[0.2em] text-[#444] font-mono-custom mt-1">ACARIGUA · VE</span>
@@ -55,14 +65,18 @@ export function HeroSection() {
 
         <h1 className="hero-title-main font-bebas text-[clamp(5rem,12vw,10rem)] leading-[0.9] tracking-[-0.02em] mb-[2rem] relative z-[1]">
           <span className="block text-[0.5em] font-mono-custom tracking-[0.3em] text-[var(--mid)] mb-[0.5rem]">by Lau</span>
-          OVER<br />SIZE
+          OVER
+          <br />
+          SIZE
         </h1>
 
         <div className="hero-subtitle-line w-[60px] h-[1px] bg-[var(--white)] mb-[2rem] origin-left relative z-[1]" />
 
         <p className="hero-desc text-[0.75rem] text-[var(--mid)] font-mono-custom leading-[1.8] max-w-[320px] mb-[2.5rem] relative z-[1]">
-          Lleva a tu artista favorito contigo.<br />
-          Diseños únicos que expresan quién eres,<br />
+          Lleva a tu artista favorito contigo.
+          <br />
+          Diseños únicos que expresan quién eres,
+          <br />
           en la mejor tela oversize. ✦
         </p>
 
@@ -76,8 +90,7 @@ export function HeroSection() {
           </a>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="hero-scroll-hint absolute bottom-6 left-[3rem] flex items-center gap-2">
+        <div className="hero-scroll-hint absolute bottom-6 left-[2rem] flex items-center gap-2 md:left-[3rem]">
           <div className="w-[1px] h-[30px] bg-[#333] relative overflow-hidden">
             <div className="w-full h-[10px] bg-[var(--mid)] animate-[scrollPulse_2s_ease-in-out_infinite]" />
           </div>
@@ -85,26 +98,26 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* HERO RIGHT — Visual Impact */}
       <div className="hero-right hidden md:flex relative bg-[#0d0d0d] hero-right-content overflow-hidden">
-        {/* Full product image */}
-        <img
-          src="/product/5.jpeg"
-          alt="Oversize By Lau — The Weeknd Tee"
-          className="absolute inset-0 w-full h-full object-cover opacity-60 scale-[1.05] hover:scale-100 transition-transform duration-[1.5s] ease-out"
-        />
+        <video
+          className="absolute inset-0 w-full h-full object-cover opacity-60 scale-[1.05]"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
 
-        {/* Dark gradient overlays for depth */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#0a0a0a_0%,transparent_30%)] z-[1]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_top,#0a0a0a_0%,transparent_40%)] z-[1]" />
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#0a0a0a_0%,transparent_30%)] z-[1]" />
 
-        {/* Giant background watermark */}
         <div className="hero-overlay-text absolute inset-0 flex items-center justify-center font-bebas text-[18rem] lg:text-[22rem] text-white opacity-[0.04] select-none z-[2] leading-[0.8] tracking-[-0.05em] text-center pointer-events-none">
           OBL
         </div>
 
-        {/* Spotify widget — floating */}
         <div className="spotify-widget bg-[rgba(10,10,10,0.9)] border border-[#222] p-[1rem] px-[1.2rem] flex items-center gap-[1rem] w-fit absolute bottom-[2rem] right-[2rem] z-[5] animate-[floatWidget_3s_ease-in-out_infinite] backdrop-blur-sm">
           <div className="w-[36px] h-[36px] bg-[#1a1a1a] border border-[#333] flex items-center justify-center text-[1rem] shrink-0">🎵</div>
           <div className="flex-1 min-w-[120px]">
@@ -121,20 +134,17 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Product tag overlay */}
         <div className="absolute top-8 right-8 z-[5] text-right">
           <div className="text-[0.5rem] tracking-[0.3em] text-[#555] uppercase mb-1 font-mono-custom">Featured</div>
           <div className="font-bebas text-[1.4rem] text-[var(--white)] tracking-[0.1em] leading-[1]">THE WEEKND</div>
           <div className="text-[0.5rem] tracking-[0.2em] text-[#444] uppercase mt-1 font-mono-custom">Oversize Tee · Edición</div>
         </div>
 
-        {/* Corner detail bottom-left */}
         <div className="absolute bottom-8 left-8 z-[5] flex flex-col gap-1">
           <span className="text-[0.5rem] tracking-[0.3em] text-[#444] uppercase font-mono-custom">Colección 2024</span>
           <span className="text-[0.5rem] tracking-[0.2em] text-[#333] font-mono-custom">— 01 / 08</span>
         </div>
 
-        {/* Vertical text */}
         <div className="absolute top-1/2 left-6 -translate-y-1/2 z-[3] [writing-mode:vertical-rl] rotate-180">
           <span className="text-[0.5rem] tracking-[0.4em] text-[#333] uppercase font-mono-custom">Oversize By Lau · Acarigua</span>
         </div>

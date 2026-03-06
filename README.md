@@ -1,3 +1,34 @@
+## Stack
+
+- Next.js 15
+- Turso/libSQL via Drizzle
+- Better Auth with email/password
+- Admin panel at `/admin`
+
+## Environment
+
+Copy `.env.example` and define:
+
+```bash
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+BETTER_AUTH_URL=http://localhost:3000
+BETTER_AUTH_SECRET=your-secret
+DATABASE_URL=libsql://your-db.turso.io
+DATABASE_AUTH_TOKEN=your-token
+ADMIN_EMAIL=admin@example.com
+```
+
+## Database
+
+Generate or push the schema to Turso with:
+
+```bash
+npm run db:generate
+npm run db:push
+```
+
+The first registered user becomes `admin`. If `ADMIN_EMAIL` is set, that email can also self-register as admin.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
