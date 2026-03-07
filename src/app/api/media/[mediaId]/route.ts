@@ -19,7 +19,10 @@ export async function GET(
         // 1. Resolver mediaId -> telegramFileId desde la DB
         // Esto es persistente y seguro (no expone el file_id)
         const [media] = await db
-            .select({ telegramFileId: productMedia.telegramFileId })
+            .select({
+                telegramFileId: productMedia.telegramFileId,
+                telegramFilePath: productMedia.telegramFilePath
+            })
             .from(productMedia)
             .where(eq(productMedia.id, mediaId))
             .limit(1);
@@ -28,7 +31,7 @@ export async function GET(
             return new Response("Media not found", { status: 404 });
         }
 
-        const { telegramFileId } = media;
+        const { telegramFileId, telegramFilePath } = media;
 
         // 2. Revisar si ya está en caché
         const cachedUrl = mediaCache.get(telegramFileId);
@@ -36,10 +39,9 @@ export async function GET(
             return NextResponse.redirect(cachedUrl, 302);
         }
 
-        // 3. Si no en caché o expirado, obtener nueva ruta de Telegram
-        const filePath = await getTelegramFilePath(telegramFileId);
+        // 3. Si no en caché, construir URL dinámicamente
         const { botToken } = getTelegramConfig();
-        const newUrl = getFileUrl(botToken, filePath);
+        const newUrl = getFileUrl(botToken, telegramFilePath);
 
         // 4. Guardar en caché (TTL de 50 minutos)
         mediaCache.set(telegramFileId, newUrl);

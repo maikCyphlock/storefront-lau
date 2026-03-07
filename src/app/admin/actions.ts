@@ -151,7 +151,7 @@ export async function createProduct(formData: FormData) {
       uploadedMedia.map((item, index) => ({
         id: crypto.randomUUID(),
         productId,
-        url: item.url,
+        url: "", // No guardamos el token en la DB
         type: item.kind,
         mimeType: item.mimeType,
         telegramFileId: item.fileId,
@@ -212,15 +212,15 @@ export async function updateProduct(formData: FormData) {
       const currentMedia = replaceMedia
         ? []
         : await tx
-            .select({ id: productMedia.id })
-            .from(productMedia)
-            .where(eq(productMedia.productId, productId));
+          .select({ id: productMedia.id })
+          .from(productMedia)
+          .where(eq(productMedia.productId, productId));
 
       await tx.insert(productMedia).values(
         uploadedMedia.map((item, index) => ({
           id: crypto.randomUUID(),
           productId,
-          url: item.url,
+          url: "", // No guardamos el token en la DB
           type: item.kind,
           mimeType: item.mimeType,
           telegramFileId: item.fileId,
