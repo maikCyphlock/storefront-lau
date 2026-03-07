@@ -31,7 +31,7 @@ function mapProduct(row: typeof products.$inferSelect & {
     .sort((left, right) => left.sortOrder - right.sortOrder)
     .map((item) => ({
       id: item.id,
-      url: item.url,
+      url: `/api/media/${item.id}`,
       type: item.type as "image" | "video",
       mimeType: item.mimeType,
     }));

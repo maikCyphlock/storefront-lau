@@ -9,7 +9,7 @@ type TelegramFileUpload = {
   kind: "image" | "video";
 };
 
-function getTelegramConfig() {
+export function getTelegramConfig() {
   const botToken = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CDN_CHAT_ID;
 
@@ -43,13 +43,13 @@ async function callTelegram<T>(
   return data.result;
 }
 
-async function getTelegramFilePath(fileId: string) {
+export async function getTelegramFilePath(fileId: string) {
   const params = new URLSearchParams({ file_id: fileId });
   const result = await callTelegram<{ file_path: string }>("getFile", params);
   return result.file_path;
 }
 
-function getFileUrl(botToken: string, filePath: string) {
+export function getFileUrl(botToken: string, filePath: string) {
   return `${TELEGRAM_API_URL}/file/bot${botToken}/${filePath}`;
 }
 

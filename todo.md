@@ -16,3 +16,5 @@
 - [x] Agregar formulario de producto reusable (`src/components/admin/product-form.tsx`).
 - [x] Implementar panel de administración (`src/app/admin/page.tsx`).
 - [x] Ajustar lógica de precios por talla en carrito y checkout.
+- [x] Implementar caché de URLs de Telegram con revalidación automática (Next.js API).
+- [x] Enmascarar IDs de Telegram (Anti-Hotlinking) usando UUIDs de base de datos.
