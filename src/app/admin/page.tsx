@@ -1,11 +1,18 @@
 import { count, desc, eq } from "drizzle-orm";
+import { ProductForm } from "@/components/admin/product-form";
 import { SignOutButton } from "@/components/admin/sign-out-button";
-import { updateOrderStatus } from "@/app/admin/actions";
+import {
+  createProduct,
+  deleteProduct,
+  updateOrderStatus,
+  updateProduct,
+} from "@/app/admin/actions";
 import { requireAdminSession } from "@/lib/auth-session";
 import { formatUsd } from "@/lib/format";
 import { orderStatuses } from "@/lib/orders";
 import { db } from "@/lib/db";
 import { orders, users } from "@/lib/db/schema";
+import { getAdminProducts } from "@/lib/products";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("es-VE", {
@@ -21,7 +28,7 @@ function formatStatus(status: string) {
 export default async function AdminPage() {
   const session = await requireAdminSession();
 
-  const [recentOrders, recentUsers, orderCount, pendingCount, userCount] =
+  const [recentOrders, recentUsers, orderCount, pendingCount, userCount, products] =
     await Promise.all([
       db.query.orders.findMany({
         with: {
@@ -47,6 +54,7 @@ export default async function AdminPage() {
         .from(orders)
         .where(eq(orders.status, "pending")),
       db.select({ value: count() }).from(users),
+      getAdminProducts(),
     ]);
 
   return (
@@ -271,6 +279,74 @@ export default async function AdminPage() {
             </div>
           </aside>
         </div>
+
+        <section className="rounded-[2rem] border border-white/10 bg-black/28 p-5 backdrop-blur">
+          <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+            <div>
+              <p className="text-[10px] tracking-[0.28em] text-zinc-500 uppercase">
+                Catalogo
+              </p>
+              <h2 className="font-bebas mt-3 text-4xl tracking-[0.04em] text-zinc-50 uppercase">
+                Productos dinamicos
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-7 text-zinc-400">
+                Carga imagenes o videos y el sistema los sube a Telegram para
+                usarlos como CDN publico. El primer archivo queda como portada.
+              </p>
+
+              <div className="mt-5">
+                <ProductForm action={createProduct} submitLabel="Crear producto" />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <article
+                    key={product.id}
+                    className="rounded-[1.5rem] border border-white/10 bg-zinc-950/90 p-4"
+                  >
+                    <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="text-lg text-zinc-100">{product.name}</h3>
+                          <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] tracking-[0.2em] text-zinc-400 uppercase">
+                            {product.isActive ? "activo" : "oculto"}
+                          </span>
+                        </div>
+                        <p className="mt-2 text-sm text-zinc-400">{product.subtitle}</p>
+                        <p className="mt-1 text-xs tracking-[0.16em] text-zinc-500 uppercase">
+                          {product.sizes.join(" · ")} · Base {formatUsd(product.price)}
+                        </p>
+                      </div>
+
+                      <form action={deleteProduct}>
+                        <input type="hidden" name="productId" value={product.id} />
+                        <button
+                          type="submit"
+                          className="rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-2 text-[10px] tracking-[0.2em] text-red-100 uppercase transition hover:bg-red-400/15"
+                        >
+                          Eliminar
+                        </button>
+                      </form>
+                    </div>
+
+                    <ProductForm
+                      action={updateProduct}
+                      product={product}
+                      submitLabel="Guardar cambios"
+                    />
+                  </article>
+                ))
+              ) : (
+                <div className="rounded-[1.5rem] border border-dashed border-white/10 bg-zinc-950/60 p-6 text-sm text-zinc-500">
+                  Aun no hay productos en base de datos. Puedes crear el primero
+                  desde este panel.
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
       </section>
     </main>
   );

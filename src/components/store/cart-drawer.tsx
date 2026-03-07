@@ -14,7 +14,6 @@ export function CartDrawer({ open, onClose }: CartDrawerProps) {
   const items = useCartStore((state) => state.items);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
   const setQuantity = useCartStore((state) => state.setQuantity);
-  const totalPrice = useCartStore((state) => state.totalPrice());
 
   useEffect(() => {
     setMounted(true);

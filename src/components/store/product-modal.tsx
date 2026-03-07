@@ -1,17 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getProductPrice } from "@/lib/product-utils";
 import { Product } from "@/types/store";
 import { useCartStore } from "@/store/cart-store";
 
 const WHATSAPP_NUMBER = "584145332928";
-
-function getPrice(product: Product, size: string): number {
-    if (product.priceBySize && product.priceBySize[size]) {
-        return product.priceBySize[size];
-    }
-    return product.price;
-}
 
 type ProductModalProps = {
     product: Product | null;
@@ -21,10 +15,12 @@ type ProductModalProps = {
 export function ProductModal({ product, onClose }: ProductModalProps) {
     const addToCart = useCartStore((state) => state.addToCart);
     const [selectedSize, setSelectedSize] = useState("");
+    const [selectedMediaIndex, setSelectedMediaIndex] = useState(0);
 
     useEffect(() => {
         if (product) {
             setSelectedSize(product.sizes[0]);
+            setSelectedMediaIndex(0);
             // Lock body scroll when modal is open
             document.body.style.overflow = "hidden";
         } else {
@@ -34,6 +30,8 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
     }, [product]);
 
     if (!product) return null;
+
+    const selectedMedia = product.media[selectedMediaIndex] ?? product.media[0];
 
     return (
         <div className="fixed inset-0 z-[200] flex items-end md:items-center justify-center">
@@ -51,11 +49,20 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
 
                 {/* Left: Image Section */}
                 <div className="w-full md:w-1/2 md:flex-1 aspect-[3/4] md:aspect-auto md:min-h-[600px] relative shrink-0 border-b md:border-b-0 md:border-r border-[#1a1a1a] overflow-hidden bg-[#050505]">
-                    <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover"
-                    />
+                    {selectedMedia?.type === "video" ? (
+                        <video
+                            src={selectedMedia.url}
+                            className="w-full h-full object-cover"
+                            controls
+                            playsInline
+                        />
+                    ) : (
+                        <img
+                            src={selectedMedia?.url ?? product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                        />
+                    )}
                     <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.6),transparent_60%)]" />
 
                     {/* Close button on mobile — top-right over image */}
@@ -70,6 +77,27 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                     <div className="absolute top-6 left-6 text-[0.5rem] tracking-[0.4em] text-[rgba(255,255,255,0.3)] font-mono-custom uppercase z-10">
                         {product.id.slice(0, 8)}
                     </div>
+
+                    {product.media.length > 1 ? (
+                        <div className="absolute bottom-4 left-4 z-10 flex gap-2">
+                            {product.media.map((media, index) => (
+                                <button
+                                    key={media.id}
+                                    type="button"
+                                    onClick={() => setSelectedMediaIndex(index)}
+                                    className={`h-14 w-14 overflow-hidden border ${selectedMediaIndex === index ? "border-white" : "border-white/20"} bg-black/60`}
+                                >
+                                    {media.type === "video" ? (
+                                        <div className="flex h-full w-full items-center justify-center text-[0.55rem] tracking-[0.2em] text-white/70 uppercase">
+                                            video
+                                        </div>
+                                    ) : (
+                                        <img src={media.url} alt="" className="h-full w-full object-cover" />
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* Right: Info Section */}
@@ -97,12 +125,18 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                             {product.name}
                         </h2>
 
+                        {product.description ? (
+                            <p className="mb-10 max-w-xl text-sm leading-7 text-[var(--mid)]">
+                                {product.description}
+                            </p>
+                        ) : null}
+
                         <div className="space-y-12 mb-12">
                             {/* Price Section */}
                             <div className="border-l border-[#222] pl-6 py-1">
                                 <span className="text-[0.55rem] tracking-[0.4em] text-[var(--mid)] font-mono-custom uppercase block mb-3">PRECIO</span>
                                 <span className="font-bebas text-[2.5rem] text-[var(--white)] leading-none block">
-                                    ${getPrice(product, selectedSize)}
+                                    ${getProductPrice(product, selectedSize)}
                                 </span>
                                 {product.priceBySize && (
                                     <span className="text-[0.5rem] tracking-[0.2em] text-[var(--mid)] font-mono-custom mt-2 block">
@@ -135,7 +169,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                     {/* Action Bar: Structural Footer */}
                     <div className="mt-auto border-t border-[#1a1a1a] bg-[#080808] p-8 md:p-14 pt-10 md:pt-12">
                         <a
-                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola! Me interesa la franela *${product.name}* en talla *${selectedSize}* ($${getPrice(product, selectedSize)})`)}`}
+                            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola! Me interesa la franela *${product.name}* en talla *${selectedSize}* ($${getProductPrice(product, selectedSize)})`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full bg-[#25D366] text-[var(--black)] py-5 md:py-6 font-mono-custom text-[0.75rem] md:text-[0.8rem] tracking-[0.35em] uppercase transition-all hover:bg-[#1ebe5d] flex items-center justify-center gap-4 group"

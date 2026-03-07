@@ -4,17 +4,17 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { products } from "@/data/products";
 import { ProductCard } from "@/components/store/product-card";
 import { Product } from "@/types/store";
 
 gsap.registerPlugin(ScrollTrigger);
 
 type ProductListProps = {
+  products: Product[];
   onSelectProduct: (product: Product) => void;
 };
 
-export function ProductList({ onSelectProduct }: ProductListProps) {
+export function ProductList({ products, onSelectProduct }: ProductListProps) {
   const container = useRef<HTMLElement>(null);
 
   useGSAP(

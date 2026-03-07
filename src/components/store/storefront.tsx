@@ -14,7 +14,11 @@ import { Footer } from "@/components/store/footer";
 import { useCartStore } from "@/store/cart-store";
 import { Product } from "@/types/store";
 
-export function Storefront() {
+type StorefrontProps = {
+  products: Product[];
+};
+
+export function Storefront({ products }: StorefrontProps) {
   const [mounted, setMounted] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -71,7 +75,7 @@ export function Storefront() {
         <span className="font-bebas text-[1.5rem] tracking-[0.2em] whitespace-nowrap shrink-0">NUEVA COLECCIÓN</span>
       </div>
 
-      <ProductList onSelectProduct={setSelectedProduct} />
+      <ProductList products={products} onSelectProduct={setSelectedProduct} />
 
       <ArtistMarquee />
 

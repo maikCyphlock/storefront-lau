@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { getProductPrice } from "@/lib/product-utils";
 import { useCartStore } from "@/store/cart-store";
 import { DeliveryMethod, OrderType } from "@/lib/whatsapp";
 import { formatUsd } from "@/lib/format";
@@ -48,7 +49,7 @@ export function CheckoutForm() {
         productImage: item.product.image,
         size: item.size,
         quantity: item.quantity,
-        unitPrice: item.product.price,
+        unitPrice: getProductPrice(item.product, item.size),
       })),
     };
     const result = checkoutOrderSchema.safeParse(payload);

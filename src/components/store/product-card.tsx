@@ -8,18 +8,31 @@ type ProductCardProps = {
 };
 
 export function ProductCard({ product, onSelect }: ProductCardProps) {
+  const cover = product.media[0];
+
   return (
     <div
       className="product-card group bg-[var(--black)] aspect-[3/4] relative overflow-hidden flex flex-col justify-end p-[1.5rem] cursor-pointer"
       onClick={() => onSelect(product)}
     >
       {/* Product image */}
-      <img
-        src={product.image}
-        alt={product.name}
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover transition-transform duration-[0.8s] ease-out group-hover:scale-[1.05] opacity-80 group-hover:opacity-100"
-      />
+      {cover?.type === "video" ? (
+        <video
+          src={cover.url}
+          muted
+          playsInline
+          autoPlay
+          loop
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[0.8s] ease-out group-hover:scale-[1.05] opacity-80 group-hover:opacity-100"
+        />
+      ) : (
+        <img
+          src={product.image}
+          alt={product.name}
+          loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-[0.8s] ease-out group-hover:scale-[1.05] opacity-80 group-hover:opacity-100"
+        />
+      )}
 
       {/* Dark gradient overlay — matches HTML ::before */}
       <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.9)_0%,transparent_60%)] z-[1]" />

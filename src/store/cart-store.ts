@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getProductPrice } from "@/lib/product-utils";
 import { CartItem, Product } from "@/types/store";
 
 type AddPayload = {
@@ -64,7 +65,8 @@ export const useCartStore = create<CartState>()(
         get().items.reduce((total, item) => total + item.quantity, 0),
       totalPrice: () =>
         get().items.reduce(
-          (total, item) => total + item.product.price * item.quantity,
+          (total, item) =>
+            total + getProductPrice(item.product, item.size) * item.quantity,
           0,
         ),
     }),

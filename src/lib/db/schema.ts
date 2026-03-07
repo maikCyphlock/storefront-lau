@@ -135,6 +135,53 @@ export const orderItems = sqliteTable(
   }),
 );
 
+export const products = sqliteTable(
+  "products",
+  {
+    id: text("id").primaryKey(),
+    slug: text("slug").notNull().unique(),
+    name: text("name").notNull(),
+    subtitle: text("subtitle").notNull(),
+    description: text("description"),
+    basePrice: real("base_price").notNull(),
+    sizes: text("sizes").notNull().default("[]"),
+    priceBySize: text("price_by_size"),
+    isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => ({
+    activeIdx: index("products_is_active_idx").on(table.isActive),
+    sortOrderIdx: index("products_sort_order_idx").on(table.sortOrder),
+  }),
+);
+
+export const productMedia = sqliteTable(
+  "product_media",
+  {
+    id: text("id").primaryKey(),
+    productId: text("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    type: text("type").notNull(),
+    mimeType: text("mime_type"),
+    telegramFileId: text("telegram_file_id").notNull(),
+    telegramFilePath: text("telegram_file_path").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" }).notNull(),
+  },
+  (table) => ({
+    productIdIdx: index("product_media_product_id_idx").on(table.productId),
+    sortOrderIdx: index("product_media_sort_order_idx").on(
+      table.productId,
+      table.sortOrder,
+    ),
+  }),
+);
+
 export const userRelations = relations(users, ({ many }) => ({
   sessions: many(sessions),
   accounts: many(accounts),
@@ -162,5 +209,16 @@ export const orderItemRelations = relations(orderItems, ({ one }) => ({
   order: one(orders, {
     fields: [orderItems.orderId],
     references: [orders.id],
+  }),
+}));
+
+export const productRelations = relations(products, ({ many }) => ({
+  media: many(productMedia),
+}));
+
+export const productMediaRelations = relations(productMedia, ({ one }) => ({
+  product: one(products, {
+    fields: [productMedia.productId],
+    references: [products.id],
   }),
 }));

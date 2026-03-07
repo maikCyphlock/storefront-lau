@@ -39,11 +39,21 @@ export async function POST(request: Request) {
       size: item.size,
       product: {
         id: item.productId,
+        slug: item.productId,
         image: item.productImage,
         name: item.productName,
         price: item.unitPrice,
         sizes: [item.size],
         subtitle: "",
+        media: [
+          {
+            id: `${item.productId}-snapshot`,
+            url: item.productImage,
+            type: "image",
+          },
+        ],
+        isActive: true,
+        sortOrder: 0,
       },
     })),
   );
